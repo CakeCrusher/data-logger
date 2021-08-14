@@ -1,13 +1,15 @@
 import React, { ReactFragment, useState, useEffect, useRef } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native'
 import { Audio } from 'expo-av'
-import {AudioFilled} from '@ant-design/icons'
+import * as FileSystem from 'expo-file-system'
 
 import Layout from '../components/Layout'
+import { Transcript } from '../types'
 
 const Recording = () => {
   const [recording, setRecording] = useState<any>()
   const [isRecording, setIsRecording] = useState(false)
+  const [transcription, setTranscription] = useState<Transcript | undefined>()
 
   const [sound, setSound] = useState<any>()
 
@@ -23,7 +25,7 @@ const Recording = () => {
   const playSoundbyte = async () => {
     console.log('loading sound');
     const _sound = await Audio.Sound.createAsync(
-      require('../assets/zoom.wav')
+      require('../assets/hello.mp3')
     )
     setSound(_sound.sound)
     console.log('playing sound');
@@ -75,7 +77,25 @@ const Recording = () => {
     console.log('loading sound');
     await playSound(uri)
 
-    console.log(`recording stopped, uri: ${uri}`);
+    const audioBase64 = await FileSystem.readAsStringAsync(uri, {encoding: FileSystem.EncodingType.Base64})
+    const httpBody = {
+      audioBase64
+    }
+
+    const res = await fetch('https://b07b5b638ec9.ngrok.io/', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(httpBody)
+    })
+    const jsonRes: Transcript = await res.json()
+    if (jsonRes) {
+      setTranscription(jsonRes)
+    } else {
+      setTranscription({table: 'ERROR', payload: {}})
+    }
+
     setRecording(undefined)
   }
 
@@ -98,6 +118,7 @@ const Recording = () => {
 
   const PlaySoundbyte = () => {
     return (
+      // <TouchableOpacity onPress={() => uploadFile('hello.raw')}>
       <TouchableOpacity onPress={playSoundbyte}>
         <Text style={{...styles.recordButton, backgroundColor: '#007aff'}}>Play Sound</Text>
       </TouchableOpacity>
@@ -109,6 +130,7 @@ const Recording = () => {
     <Layout>
         <View>
           <RecordButton />
+          {transcription ? <Text style={styles.recordButton}>You said: {JSON.stringify(transcription)}</Text> : null}
           <PlaySoundbyte  />
         </View>
     </Layout>
