@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native'
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import Recording from './screens/Record';
 import Data from './screens/Data';
@@ -9,7 +9,7 @@ const Stack = createStackNavigator()
 
 const App = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: '#222'}}}>
       <Stack.Navigator>
         <Stack.Screen
           name="Record"
@@ -39,6 +39,7 @@ const App = () => {
             )
           })}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@expo/vector-icons": "^12.0.0",
     "@google-cloud/speech": "^4.6.0",
     "@google-cloud/storage": "^5.13.0",
     "@google-cloud/text-to-speech": "^3.2.6",
+    "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.4",
     "expo": "~42.0.1",
@@ -27,6 +29,7 @@
     "react-native-fs": "^2.18.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-google-cloud-speech-to-text": "^0.5.4",
+    "react-native-picker-select": "^8.0.4",
     "react-native-web": "~0.13.12"
   },
   "devDependencies": {

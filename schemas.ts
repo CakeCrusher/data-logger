@@ -1,22 +1,25 @@
-export const GET_VIDEO_FILESNIPPET = `
-query MyQuery($videoId: String!) {
-  video_by_pk(videoId: $videoId) {
-    fileSnippets {
-      fps
-      height
-      width
-      githubURL
-      frameData {
-        frame
-        fileInFrames {
-          fileURL
-          height
-          width
-          x
-          y
-        }
-      }
+export const SAVE_TEST = `
+mutation MyMutation($dateTime: timestamp!, $speech: String!) {
+  insert_test(objects: {dateTime: $dateTime, speech: $speech}) {
+    returning {
+      dateTime
+      speech
+      id
     }
   }
 }
+
 `;
+// {
+//   "speech": "asd",
+//   "dateTime": "2021-08-15T10:42:03.931Z"
+// }
+
+export const GET_TEST = `
+query MyQuery {
+  test(order_by: {dateTime: desc}, limit: 10) {
+    speech
+    dateTime
+  }
+}
+`
