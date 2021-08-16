@@ -24,6 +24,11 @@ export const fetchGraphQL = async (
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Transcript } from './types';
 
+export const clearTranscripts = async () => {
+  await AsyncStorage.setItem("pendingTranscriptions", JSON.stringify([]));
+  return null
+}
+
 export const addTranscript = async (transcript) => {
   const transcriptsStr = await AsyncStorage.getItem('pendingTranscriptions')
   let transcripts: Transcript[] = []

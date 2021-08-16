@@ -20,7 +20,7 @@ const DataItem = (props: DataItemProps) => {
     </View>
   )
   const labelDataPairs = Object.keys(props.data).map((key) => {
-    if (key !== 'dateTime') {
+    if ((key !== 'dateTime') && (key !== 'id')) {
       return <LabelDataPair key={key+props.data.id} _key={key} />
     }
   })

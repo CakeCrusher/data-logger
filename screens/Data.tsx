@@ -4,9 +4,9 @@ import { Text, StyleSheet, View } from 'react-native'
 import Layout from '../components/Layout'
 import InactedTranscription from '../components/InactedTranscription'
 import { Transcript } from '../types'
-import { fetchGraphQL, getTranscripts, removeTranscript } from '../helperFunctions'
+import { clearTranscripts, fetchGraphQL, getTranscripts, removeTranscript } from '../helperFunctions'
 import RNPickerSelect from 'react-native-picker-select';
-import { GET_TEST } from '../schemas'
+import { GET_RUNNING, GET_TEST } from '../schemas'
 import DataItem from '../components/DataItem'
 
 const Data = () => {
@@ -16,6 +16,7 @@ const Data = () => {
 
   useEffect(() => {
     const initialyzingData = async () => {
+      // await clearTranscripts()
       const pendingTranscripts = await getTranscripts()
       setTranscripts(pendingTranscripts)
     }
@@ -36,21 +37,29 @@ const Data = () => {
   
   const onSelectChange = async (value: string) => {
     setSelectorValue(value)
+    let schema
     switch (value) {
       case 'test':
-        const allTestItems = await fetchGraphQL(GET_TEST) 
-        const parsedTestItems = allTestItems.data.test.map(testItem => {
-          const newTestItem = {
-            ...testItem,
-            dateTime: new Date(testItem.dateTime).toISOString().split('T').join(' ').split('.')[0]
-          }
-          return newTestItem
-        })
-        setDataItems(parsedTestItems)
+        schema = GET_TEST
+        break;
+      case 'running':
+        schema = GET_RUNNING
         break;
       default:
+        schema = null
         setDataItems([])
         break;
+    }
+    if (schema) {
+      const allItems = await fetchGraphQL(schema) 
+      const parsedItems = allItems.data[value].map(item => {
+        const newItem = {
+          ...item,
+          dateTime: new Date(item.dateTime).toISOString().split('T').join(' ').split('.')[0]
+        }
+        return newItem
+      })
+      setDataItems(parsedItems)
     }
   }
 
@@ -73,6 +82,7 @@ const Data = () => {
           onValueChange={onSelectChange}
           items={[
             {label: 'test', value: 'test'},
+            {label: 'running', value: 'running'},
           ]}
           value={selectorValue}
         />

@@ -6,7 +6,7 @@ import Layout from './Layout'
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { fetchGraphQL } from '../helperFunctions';
-import { SAVE_TEST } from '../schemas';
+import { SAVE_RUNNING, SAVE_TEST } from '../schemas';
 
 type InactedTranscriptionProps = {
   transcript: Transcript | undefined
@@ -25,6 +25,14 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
   switch (transcript.table) {
     case 'testing':
       description = transcript.payload.speech.substring(0,20)
+      break
+    case 'running':
+      description = `${transcript.payload.distance.toString()} meters in ${transcript.payload.time.toString()} seconds.`
+      break
+    default:
+      description = 'ADD DESCRIPTION'
+      break
+
   }
 
   const date = new Date(transcript.dateTime).toISOString().split('T')[1].split('.')[0]
@@ -33,7 +41,7 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
 
   const Fields = () => {
     const Field = ({_key}) => {
-      const [value, setValue] = useState(transcript.payload[_key])
+      const [value, setValue] = useState(transcript.payload[_key].toString())
 
       const onChangeField = (e) => {
         const newTranscript = {...transcript}
@@ -70,7 +78,19 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
       props.onRemoveTranscript()
     }
     const saveTranscription = async () => {
-      const jsonRes = await fetchGraphQL(SAVE_TEST, {...transcript.payload, dateTime: transcript.dateTime})
+      let schema
+      switch (transcript.table) {
+        case 'testing':
+          schema = SAVE_TEST
+          break;
+        case 'running':
+          schema = SAVE_RUNNING
+          break;
+        default:
+          console.log('ADD SCHEMA');
+          break;
+      }
+      const jsonRes = await fetchGraphQL(schema, {...transcript.payload, dateTime: transcript.dateTime})
       console.log(jsonRes);
       props.onRemoveTranscript()
     }

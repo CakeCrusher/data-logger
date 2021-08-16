@@ -22,7 +22,7 @@ const Recording = () => {
           audioBase64
         }
       
-        const res = await fetch('https://54dbfbd7629e.ngrok.io/', {
+        const res = await fetch('https://0292a3b34d8e.ngrok.io/', {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
@@ -33,7 +33,7 @@ const Recording = () => {
         console.log(jsonRes);
         
         if (jsonRes && jsonRes.table !== 'ERROR') {
-          console.log(jsonRes.table);
+          console.log(jsonRes);
           addTranscript(jsonRes)
           setTranscription(jsonRes)
         } else {
