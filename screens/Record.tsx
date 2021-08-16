@@ -22,7 +22,7 @@ const Recording = () => {
           audioBase64
         }
       
-        const res = await fetch('https://0292a3b34d8e.ngrok.io/', {
+        const res = await fetch('https://data-logger-backend.herokuapp.com/', {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
