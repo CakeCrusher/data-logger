@@ -4,9 +4,9 @@
     "slug": "data-logger",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/data-logger.jpg",
+    "icon": "./assets/data-logger.png",
     "splash": {
-      "image": "./assets/data-logger.jpg",
+      "image": "./assets/data-logger.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,12 +21,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/data-logger.jpg",
+        "foregroundImage": "./assets/data-logger.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+      ],
+      "package": "com.sebastians.datalogger"
     },
     "web": {
-      "favicon": "./assets/data-logger.jpg"
+      "favicon": "./assets/data-logger.png"
     },
     "plugins": [
       "expo-file-system"
