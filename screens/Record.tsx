@@ -21,8 +21,8 @@ const Recording = () => {
         const httpBody = {
           audioBase64
         }
-      
-        const res = await fetch('https://data-logger-backend.herokuapp.com/', {
+        const backendURL = 'https://3c3a-68-234-232-28.ngrok.io/transcribe'
+        const res = await fetch(backendURL, {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
