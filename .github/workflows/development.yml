@@ -19,7 +19,7 @@ jobs:
         with:
           expo-version: 4.x
       - run: npm install
-      - run: npm start &
+      - run: expo start &
       - run: sleep 60
       - uses: fjogeleit/http-request-action@master
         id: test_callToExpoPage
