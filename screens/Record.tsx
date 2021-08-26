@@ -38,7 +38,7 @@ const Recording = () => {
           setTranscription(jsonRes)
         } else {
           setTranscription(undefined)
-        }
+        
       }
     }
 

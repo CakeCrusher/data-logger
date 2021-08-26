@@ -19,12 +19,12 @@ jobs:
         with:
           expo-version: 4.x
       - run: npm install
-      - run: expo start &
-      - run: sleep 60
-      - uses: fjogeleit/http-request-action@master
-        id: test_callToExpoPage
-        with:
-          url: 'http://localhost:19002'
-          method: 'GET'
-      - name: response
-        run: echo ${{ steps.test_callToExpoPage.output }}
+      - run: npm start &
+      # - run: sleep 60
+      # - uses: fjogeleit/http-request-action@master
+      #   id: test_callToExpoPage
+      #   with:
+      #     url: 'http://localhost:19002'
+      #     method: 'GET'
+      # - name: response
+      #   run: echo ${{ steps.test_callToExpoPage.output }}
