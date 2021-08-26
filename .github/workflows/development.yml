@@ -27,4 +27,4 @@ jobs:
           url: 'http://localhost:19002'
           method: 'GET'
       - name: response
-        run: echo ${{ steops.test_callToExpoPage.output }}
+        run: echo ${{ steps.test_callToExpoPage.output }}
