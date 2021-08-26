@@ -1,0 +1,30 @@
+name: Development pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: expo/expo-github-actions@v6
+        with:
+          expo-version: 4.x
+      - run: npm install
+      - run: npm start &
+      - run: sleep 60
+      - uses: fjogeleit/http-request-action@master
+        id: test_callToExpoPage
+        with:
+          url: 'http://localhost:19002'
+          method: 'GET'
+      - name: response
+        run: echo ${{ steops.test_callToExpoPage.output }}
