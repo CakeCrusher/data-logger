@@ -9,10 +9,15 @@ import RNPickerSelect from 'react-native-picker-select';
 import { GET_RUNNING, GET_TEST } from '../schemas'
 import DataItem from '../components/DataItem'
 
+import { useSelector } from 'react-redux'
+
+
 const Data = () => {
   const [dataItems, setDataItems] = useState<any[]>([])
   const [trancripts, setTranscripts] = useState<Transcript[]>([])
   const [selectorValue, setSelectorValue] = useState<string>()
+
+  const counter = useSelector((state:any) => state.counter)
 
   useEffect(() => {
     const initialyzingData = async () => {
@@ -74,21 +79,22 @@ const Data = () => {
 
   return (
     <Layout>
-        <View style={styles.container}>
-          <InactedTranscriptionList/>
-        </View>
-        <RNPickerSelect
-          style={{ inputAndroid: { color: 'white' } }}
-          onValueChange={onSelectChange}
-          items={[
-            {label: 'test', value: 'test'},
-            {label: 'running', value: 'running'},
-          ]}
-          value={selectorValue}
-        />
-        <View style={styles.container}>
-          <DataItems key={JSON.stringify(dataItems)}/>
-        </View>
+      <Text>Counter: {counter}</Text>
+      <View style={styles.container}>
+        <InactedTranscriptionList/>
+      </View>
+      <RNPickerSelect
+        style={{ inputAndroid: { color: 'white' } }}
+        onValueChange={onSelectChange}
+        items={[
+          {label: 'test', value: 'test'},
+          {label: 'running', value: 'running'},
+        ]}
+        value={selectorValue}
+      />
+      <View style={styles.container}>
+        <DataItems key={JSON.stringify(dataItems)}/>
+      </View>
     </Layout>
   )
 }

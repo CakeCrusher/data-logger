@@ -30,7 +30,10 @@
     "react-native-gesture-handler": "^1.10.3",
     "react-native-google-cloud-speech-to-text": "^0.5.4",
     "react-native-picker-select": "^8.0.4",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.1",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

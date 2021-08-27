@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Image } from 'react-native'
+import { StyleSheet, View, Button, Text } from 'react-native'
+import { useSelector, useDispatch, connect } from 'react-redux'
 import * as FileSystem from 'expo-file-system'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import Layout from '../components/Layout'
@@ -9,19 +9,24 @@ import RecordButton from '../components/RecordButton'
 import { Transcript } from '../types'
 import InactedTranscription from '../components/InactedTranscription'
 import { addTranscript, removeTranscript } from '../helperFunctions';
+import TokenTest from '../components/TokenTest'
 
-const Recording = () => {
+
+
+const Recording = (props: any) => {
   const [transcription, setTranscription] = useState<Transcript | undefined>()
-  const [uri, setURI] = useState<string | undefined>()
+
+  const counter = useSelector((state: any) => state.counter)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const postRecorded = async () => {
-      if (uri) {
-        const audioBase64 = await FileSystem.readAsStringAsync(uri, {encoding: FileSystem.EncodingType.Base64})
+      if (props.recordingURI) {
+        const audioBase64 = await FileSystem.readAsStringAsync(props.recordingURI, {encoding: FileSystem.EncodingType.Base64})
         const httpBody = {
           audioBase64
         }
-        const backendURL = 'https://3c3a-68-234-232-28.ngrok.io/transcribe'
+        const backendURL = 'https://5389-68-234-232-27.ngrok.io/transcribe'
         const res = await fetch(backendURL, {
           method: 'POST',
           headers: {
@@ -44,7 +49,7 @@ const Recording = () => {
 
     postRecorded()
 
-  }, [uri])
+  }, [props.recordingURI])
 
   const onRemoveTranscript = async () => {
     await removeTranscript(transcription)
@@ -55,7 +60,8 @@ const Recording = () => {
   return (
     <Layout>
         <View style={styles.container}>
-          <RecordButton setURI={setURI} />
+          <TokenTest /> 
+          <RecordButton />
           <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
         </View>
     </Layout>
@@ -71,5 +77,11 @@ const styles = StyleSheet.create({
   }
 })
 
+const mapStateToProps = (state: any) => ({
+  recordingURI: state.recordingURI.recordingURI
+})
+const mapDispatchToProps = (dispatch: any) => ({
+})
 
-export default Recording
+
+export default connect(mapStateToProps, mapDispatchToProps)(Recording)
