@@ -27,7 +27,7 @@ const Recording = (props: any) => {
         const httpBody = {
           audioBase64
         }
-        const backendURL = BACKEND_URL
+        const backendURL = `${BACKEND_URL}/transcribe`
         const res = await fetch(backendURL, {
           method: 'POST',
           headers: {
