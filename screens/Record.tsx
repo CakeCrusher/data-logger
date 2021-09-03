@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Button, Text } from 'react-native'
 import { useSelector, useDispatch, connect } from 'react-redux'
 import * as FileSystem from 'expo-file-system'
+import Login from '../components/Login'
 
 
 import Layout from '../components/Layout'
@@ -9,7 +10,7 @@ import RecordButton from '../components/RecordButton'
 import { Transcript } from '../types'
 import InactedTranscription from '../components/InactedTranscription'
 import { addTranscript, removeTranscript } from '../helperFunctions';
-import TokenTest from '../components/TokenTest'
+import {BACKEND_URL} from 'react-native-dotenv'
 
 
 
@@ -26,7 +27,7 @@ const Recording = (props: any) => {
         const httpBody = {
           audioBase64
         }
-        const backendURL = 'https://5389-68-234-232-27.ngrok.io/transcribe'
+        const backendURL = BACKEND_URL
         const res = await fetch(backendURL, {
           method: 'POST',
           headers: {
@@ -60,7 +61,7 @@ const Recording = (props: any) => {
   return (
     <Layout>
         <View style={styles.container}>
-          <TokenTest /> 
+          <Login />
           <RecordButton />
           <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
         </View>

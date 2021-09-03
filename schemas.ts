@@ -15,6 +15,14 @@ mutation MyMutation($dateTime: timestamp!, $speech: String!) {
 //   "dateTime": "2021-08-15T10:42:03.931Z"
 // }
 
+export const GET_USERINFO = `
+  query MyQuery {
+    auth0 {
+      email
+    }
+  }
+`
+
 export const GET_TEST = `
 query MyQuery {
   test(order_by: {dateTime: desc}, limit: 10) {

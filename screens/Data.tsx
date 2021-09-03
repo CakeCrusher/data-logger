@@ -9,17 +9,16 @@ import RNPickerSelect from 'react-native-picker-select';
 import { GET_RUNNING, GET_TEST } from '../schemas'
 import DataItem from '../components/DataItem'
 
-import { useSelector } from 'react-redux'
 
-
-const Data = () => {
+const Data = (props) => {
   const [dataItems, setDataItems] = useState<any[]>([])
   const [trancripts, setTranscripts] = useState<Transcript[]>([])
   const [selectorValue, setSelectorValue] = useState<string>()
 
-  const counter = useSelector((state:any) => state.counter)
-
   useEffect(() => {
+    // log the current route with navigation
+    
+    
     const initialyzingData = async () => {
       // await clearTranscripts()
       const pendingTranscripts = await getTranscripts()
@@ -79,7 +78,6 @@ const Data = () => {
 
   return (
     <Layout>
-      <Text>Counter: {counter}</Text>
       <View style={styles.container}>
         <InactedTranscriptionList/>
       </View>
@@ -110,6 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   }
 })
+
 
 
 export default Data

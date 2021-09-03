@@ -1,16 +1,24 @@
+import {HASURA_ADMIN_SECRET} from 'react-native-dotenv'
+
 export const fetchGraphQL = async (
   schema: string,
-  variables: any = {}
+  variables: any = {},
+  headers: any = {},
 ): Promise<any> => {
   const graphql = JSON.stringify({
     query: schema,
     variables,
   });
+
+  const additionalHeaders = headers ? headers : {
+    "x-hasura-admin-secret": HASURA_ADMIN_SECRET
+  } 
+
   const requestOptions = {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-hasura-admin-secret": "3fVAMs0P7prKMOzAUb4uUoJF9eTrbPTh0X9sqe6vGnECNT0AHa3Bkyndf81V6pS4",
+      ...additionalHeaders
     },
     body: graphql,
   };
@@ -18,7 +26,16 @@ export const fetchGraphQL = async (
   const res = await fetch(database_url, requestOptions).then((res: any) =>
     res.json()
   );
+  
   return res;
+};
+
+export const jsonToUrlParams = (json: any) => {
+  return Object.keys(json)
+    .map(key => {
+      return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+    })
+    .join("&");
 };
 
 import AsyncStorage from '@react-native-async-storage/async-storage';

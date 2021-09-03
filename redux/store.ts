@@ -3,11 +3,12 @@ import { combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 
 import tokenReducer from './reducers/tokenReducer'
+import userReducer from './reducers/userReducer'
 import recordingURIReducer from './reducers/recordingURI'
 
 const combinedReducers = combineReducers({
-    token: tokenReducer,
-    recordingURI: recordingURIReducer,
+  user: userReducer,
+  recordingURI: recordingURIReducer,
 })
 
 const store = createStore(

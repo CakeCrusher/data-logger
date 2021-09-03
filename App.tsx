@@ -1,13 +1,13 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import Recording from './screens/Record';
 import Data from './screens/Data';
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator()
 
 const App = () => {
   return (
