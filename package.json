@@ -29,6 +29,7 @@
     "react-dom": "16.13.1",
     "react-icons": "^4.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-auth0": "^2.9.0",
     "react-native-dotenv": "^3.2.0",
     "react-native-fileupload": "^1.2.0",
     "react-native-fs": "^2.18.0",

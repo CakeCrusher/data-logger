@@ -3,22 +3,20 @@ import {HASURA_ADMIN_SECRET} from 'react-native-dotenv'
 export const fetchGraphQL = async (
   schema: string,
   variables: any = {},
-  headers: any = {},
+  token: string | null,
 ): Promise<any> => {
   const graphql = JSON.stringify({
     query: schema,
     variables,
   });
-
-  const additionalHeaders = headers ? headers : {
-    "x-hasura-admin-secret": HASURA_ADMIN_SECRET
-  } 
-
+  
+  console.log('token: ', token);
+  
   const requestOptions = {
     method: "POST",
     headers: {
-      "content-type": "application/json",
-      ...additionalHeaders
+      'content-type': 'application/json',
+      'Authorization': `Bearer ${token}`
     },
     body: graphql,
   };
