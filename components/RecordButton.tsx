@@ -16,22 +16,22 @@ const RecordButton = (props) => {
   const Player = useRef(new Audio.Sound())
 
   const playSound = async (uri) => {
-    const preExistingSound = await Player.current.getStatusAsync()
-    if (preExistingSound.isLoaded) {
-      console.log('unloading sound');
-      Player.current.unloadAsync()
-    }
-    console.log('loading sound');
+    // const preExistingSound = await Player.current.getStatusAsync()
+    // if (preExistingSound.isLoaded) {
+    //   console.log('unloading sound');
+    //   Player.current.unloadAsync()
+    // }
+    // console.log('loading sound');
     
-    await Player.current.loadAsync(
-      { uri },
-      {},
-      true
-    )
-    const response = await Player.current.getStatusAsync()
-    if (response.isLoaded) {
-      Player.current.playAsync()
-    }
+    // await Player.current.loadAsync(
+    //   { uri },
+    //   {},
+    //   true
+    // )
+    // const response = await Player.current.getStatusAsync()
+    // if (response.isLoaded) {
+    //   Player.current.playAsync()
+    // }
   }
 
   const startRecording = async () => {

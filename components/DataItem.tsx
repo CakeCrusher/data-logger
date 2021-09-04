@@ -31,7 +31,7 @@ const DataItem = (props: DataItemProps) => {
         <View style={styles.vLineContainer}>
           <View style={styles.vLine}/>
           <View style={styles.contentContainer}>
-            <Text style={styles.date}>{props.data.dateTime}</Text>
+            <Text style={styles.date}>{props.data.dateTime.split('T').join(' ')}</Text>
             <LabelDataPairs />
           </View>
         </View>

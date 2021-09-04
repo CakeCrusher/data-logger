@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Button, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Button, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { useSelector, useDispatch, connect } from 'react-redux'
 import * as FileSystem from 'expo-file-system'
 import Login from '../components/Login'
@@ -36,7 +36,7 @@ const Recording = (props: any) => {
         const httpBody = {
           audioBase64
         }
-        const transcribeUrl = 'https://7c4d-68-234-232-22.ngrok.io/transcribe'
+        const transcribeUrl = 'http://6c38-68-234-232-22.ngrok.io/transcribe'
         
         const res = await fetch(transcribeUrl, {
           method: 'POST',
@@ -71,7 +71,7 @@ const Recording = (props: any) => {
 
   return (
     <Layout>
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <RecordButton />
           <View style={{marginTop: 20}}>
             <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
@@ -81,7 +81,7 @@ const Recording = (props: any) => {
               <Text style={styles.navButton}>Data</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
     </Layout>
   )
 }

@@ -38,6 +38,6 @@
     "plugins": [
       "expo-file-system"
     ],
-    "scheme": "auth.expo.io"
+    "scheme": "Data logger"
   }
 }

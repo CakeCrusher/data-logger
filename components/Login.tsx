@@ -25,6 +25,9 @@ const Login = (props) => {
     
     const fetchUserInfo = async () => {
       const res = await fetchGraphQL(GET_USERINFO, {}, props.user.token)
+      if (!res.data) {
+        return null
+      }
       props.setUserInfo({
         id: res.data.auth0.id,
         name: res.data.auth0.name,

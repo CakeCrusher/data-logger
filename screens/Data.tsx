@@ -12,6 +12,7 @@ import { getUser } from '../redux/actions/user'
 import { connect } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import Login from '../components/Login'
+import Chart from '../components/Chart'
 
 
 const Data = (props) => {
@@ -30,7 +31,12 @@ const Data = (props) => {
       
       setTranscripts(pendingTranscripts)
     }
+    if (dataItems) {
+      setDataItems([])
+    }
     initialyzingData()
+    console.log('INIT Data');
+    
   }, [])
   useEffect(() => {
     if (!props.user.token) {
@@ -54,10 +60,22 @@ const Data = (props) => {
   
   const InactedTranscriptionList = () => (<>{inactedTranscriptionList}</>)
   
-  const onSelectChange = async (value: string) => {
-    setSelectorValue(value)
+  const getDataItems = async (schema: string, table: string) => {
+    const allItems = await fetchGraphQL(schema, {}, props.user.token) 
+    const parsedItems = allItems.data[table].map(item => {
+      const newItem = {
+        ...item,
+        dateTime: new Date(item.dateTime).toISOString().split('.')[0]
+      }
+      return newItem
+    })
+    setDataItems(parsedItems)
+  }
+
+  const onSelectChange = async (table: string) => {
+    setSelectorValue(table)
     let schema
-    switch (value) {
+    switch (table) {
       case 'test':
         schema = GET_TEST
         break;
@@ -70,15 +88,7 @@ const Data = (props) => {
         break;
     }
     if (schema) {
-      const allItems = await fetchGraphQL(schema, {}, props.user.token) 
-      const parsedItems = allItems.data[value].map(item => {
-        const newItem = {
-          ...item,
-          dateTime: new Date(item.dateTime).toISOString().split('T').join(' ').split('.')[0]
-        }
-        return newItem
-      })
-      setDataItems(parsedItems)
+      await getDataItems(schema, table)
     }
   }
 
@@ -96,7 +106,7 @@ const Data = (props) => {
       return (
         <View style={styles.selectorWrapper}>
           <RNPickerSelect
-            placeholder={{label: 'Select a table', value: 'Select a table'}}
+            placeholder={{label: 'Table', value: 'Table'}}
             style={{ inputAndroid: { color: 'white', padding: 20 } }}
             onValueChange={onSelectChange}
             items={[
@@ -124,7 +134,7 @@ const Data = (props) => {
           <Text style={styles.selectorLabel}>Table data: </Text>
           <LoginOrSelector />
         </View>
-
+        <Chart dataItems={dataItems} />
         <View style={styles.container}>
           <DataItems key={JSON.stringify(dataItems)}/>
         </View>
