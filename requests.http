@@ -1,7 +1,23 @@
-POST https://speech.googleapis.com/v1/speech:recognize?key=AIzaSyCg2Q9oqiiNXdt09dEAPaIjtwD8mJZAGXk HTTP/1.1
+# POST https://speech.googleapis.com/v1/speech:recognize?key=AIzaSyCg2Q9oqiiNXdt09dEAPaIjtwD8mJZAGXk HTTP/1.1
 
-Authorization: Bearer [YOUR_ACCESS_TOKEN]
-Accept: application/json
-Content-Type: application/json
+# Authorization: Bearer [YOUR_ACCESS_TOKEN]
+# Accept: application/json
+# Content-Type: application/json
 
-{}
+# {}
+
+# POST https://dev-laprniv9.us.auth0.com/oauth/token
+# content-type: application/json
+
+# {"client_id":"gHn8Eg7pYqc4CrRkhQBFJEjiRDCuWEL3","client_secret":"HahBHhq8UhPVzY7NXB9RVorNSJA0Dp_ZQe8x4_81Vw7ystyubWbYJvXpGjWdaGNO","audience":"https://hasura.io/learn","grant_type":"client_credentials"}
+
+POST https://dev-laprniv9.us.auth0.com/oauth/token
+content-type: application/x-www-form-urlencoded
+
+{
+    "grant_type": "authorization_code",
+    "client_id": "1L9AtVm5VKmSZqKWqBy5g91orAFPpk4y",
+    "client_secret": "PjsSMYhsItPrg8sgQy0MF8bgGoe2Z9SCoffX8D11zT38DAjgM5nt0ybtoIvDynq9",
+    "code": "XHmL7lHW3e6yEIGK",
+    "redirect_uri": "https://auth.expo.io/@sebastians/data-logger"
+}

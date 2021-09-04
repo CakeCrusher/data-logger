@@ -1,19 +1,29 @@
 export const SAVE_TEST = `
-mutation MyMutation($dateTime: timestamp!, $speech: String!) {
-  insert_test(objects: {dateTime: $dateTime, speech: $speech}) {
+mutation MyMutation($dateTime: timestamp!, $speech: String!, $user_id: String!) {
+  insert_test(objects: {dateTime: $dateTime, speech: $speech, user_id: $user_id}) {
     returning {
-      dateTime
-      speech
       id
     }
   }
 }
 
+
 `;
 // {
 //   "speech": "asd",
-//   "dateTime": "2021-08-15T10:42:03.931Z"
+//   "dateTime": "2021-08-15T10:42:03.931Z",
+//   "user_id": "USER_ID"
 // }
+
+export const GET_USERINFO = `
+query MyQuery {
+  auth0 {
+    email
+    id
+    name
+  }
+}
+`
 
 export const GET_TEST = `
 query MyQuery {
@@ -26,8 +36,8 @@ query MyQuery {
 `
 
 export const SAVE_RUNNING = `
-mutation MyMutation($dateTime: timestamp!, $distance: Int!, $time: Int!) {
-  insert_running(objects: {distance: $distance, time: $time, dateTime: $dateTime}) {
+mutation MyMutation($dateTime: timestamp!, $distance: Int!, $time: Int!, $user_id: String!) {
+  insert_running(objects: {distance: $distance, time: $time, dateTime: $dateTime, user_id: $user_id}) {
     returning {
       id
     }
@@ -37,7 +47,8 @@ mutation MyMutation($dateTime: timestamp!, $distance: Int!, $time: Int!) {
 // {
 //   "dateTime": "2021-08-16T01:39:39.293Z",
 //   "distance": 1600,
-//   "time": 355
+//   "time": 355,
+//   "user_id": "USER_ID"
 // }
 
 export const GET_RUNNING = `

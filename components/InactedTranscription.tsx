@@ -1,14 +1,17 @@
 import React, {useState} from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, TextInput } from 'react-native'
-import { TestPayload, Transcript } from '../types'
+import { TestPayload, Transcript, User } from '../types'
 
 import Layout from './Layout'
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { fetchGraphQL } from '../helperFunctions';
 import { SAVE_RUNNING, SAVE_TEST } from '../schemas';
+import { connect } from 'react-redux';
+import Login from './Login';
 
 type InactedTranscriptionProps = {
+  user: User,
   transcript: Transcript | undefined
   onRemoveTranscript: () => void
 }
@@ -19,6 +22,22 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
 
   if (!transcript) {
     return null
+  }
+  if (transcript.table === 'ERROR') {
+    return (
+      <View style={styles.vLineContainer}>
+        <View style={{...styles.vLine, backgroundColor: '#dc3546'}}/>
+        <View>
+          <View style={styles.mainText}>
+            <Text style={styles.header}>Error</Text>
+            <Text style={styles.secondary}>Failed to classify or transcribe</Text>
+          </View>
+          <TouchableOpacity onPress={() => props.onRemoveTranscript()} style={{...styles.deleteButton, width: 40, marginTop: 10}}>
+            <Entypo name="cross" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
   }
 
   let description
@@ -77,37 +96,59 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
     const deleteTranscription = () => {
       props.onRemoveTranscript()
     }
+
     const saveTranscription = async () => {
       let schema
+      let vars = {
+        ...transcript.payload,
+        distance: parseInt(transcript.payload.distance),
+        dateTime: transcript.dateTime,
+        user_id: props.user.userInfo.id
+      }
       switch (transcript.table) {
         case 'testing':
           schema = SAVE_TEST
           break;
         case 'running':
           schema = SAVE_RUNNING
+          vars = {
+            ...vars,
+            distance: parseInt(transcript.payload.distance),
+          }
           break;
         default:
           console.log('ADD SCHEMA');
           break;
       }
-      const jsonRes = await fetchGraphQL(schema, {...transcript.payload, dateTime: transcript.dateTime})
-      console.log(jsonRes);
+      const jsonRes = await fetchGraphQL(schema, vars, props.user.token)
+      console.log(`res for ${transcript.table}: `, jsonRes);
       props.onRemoveTranscript()
     }
-    return (
-      <View style={styles.actionButtonsContainer}>
-        <TouchableOpacity onPress={deleteTranscription} style={styles.deleteButton}>
-          <Entypo name="cross" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={saveTranscription} style={styles.saveButton}>
-          <AntDesign name="check" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-    )
+    if (!props.user.token) {
+      return (
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity onPress={deleteTranscription} style={{...styles.deleteButton, width: 40}}>
+            <Entypo name="cross" size={24} color="white" />
+          </TouchableOpacity>
+          <Login title="Log in to save" />
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity onPress={deleteTranscription} style={styles.deleteButton}>
+            <Entypo name="cross" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={saveTranscription} style={styles.saveButton}>
+            <AntDesign name="check" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      )
+    }
   }
 
   return (
-    <Layout>
+    <View>
         <View style={styles.vLineContainer}>
           <View style={styles.vLine}/>
           <TouchableOpacity style={styles.headerContainer} onPress={() => setExpanded(!expanded)}>
@@ -127,7 +168,7 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
             <ActionButtons />
           </View>
         </View>
-    </Layout>
+    </View>
   )
 }
 
@@ -214,5 +255,11 @@ const styles = StyleSheet.create({
   },
 })
 
+const mapStateToProps = (state: any) => ({
+  user: state.user
+})
+const mapDispatchToProps = (dispatch: any) => ({
+})
 
-export default InactedTranscription
+
+export default connect(mapStateToProps, mapDispatchToProps)(InactedTranscription)

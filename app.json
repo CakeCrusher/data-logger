@@ -2,7 +2,7 @@
   "expo": {
     "name": "Data Logger",
     "slug": "data-logger",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/data-logger.png",
     "splash": {
@@ -37,6 +37,7 @@
     },
     "plugins": [
       "expo-file-system"
-    ]
+    ],
+    "scheme": "auth.expo.io"
   }
 }

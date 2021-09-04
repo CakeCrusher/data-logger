@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native'
 
 import Layout from '../components/Layout'
 import InactedTranscription from '../components/InactedTranscription'
@@ -8,20 +8,35 @@ import { clearTranscripts, fetchGraphQL, getTranscripts, removeTranscript } from
 import RNPickerSelect from 'react-native-picker-select';
 import { GET_RUNNING, GET_TEST } from '../schemas'
 import DataItem from '../components/DataItem'
+import { getUser } from '../redux/actions/user'
+import { connect } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import Login from '../components/Login'
 
-const Data = () => {
+
+const Data = (props) => {
   const [dataItems, setDataItems] = useState<any[]>([])
   const [trancripts, setTranscripts] = useState<Transcript[]>([])
   const [selectorValue, setSelectorValue] = useState<string>()
+  const navigation = useNavigation()
 
   useEffect(() => {
+    if (!props.user.userInfo.id && !props.user.userInfo.token) {
+      props.getUser()
+    }
     const initialyzingData = async () => {
       // await clearTranscripts()
       const pendingTranscripts = await getTranscripts()
+      
       setTranscripts(pendingTranscripts)
     }
     initialyzingData()
   }, [])
+  useEffect(() => {
+    if (!props.user.token) {
+      setDataItems([])
+    }
+  }, [props.user.token])
 
   const inactedTranscriptionList = trancripts.map(transcription => {
     const onRemoveTranscript = async () => {
@@ -30,7 +45,11 @@ const Data = () => {
       setTranscripts(newTranscripts)
     }
 
-    return <InactedTranscription key={transcription.dateTime} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+    return (
+      <View key={transcription.dateTime} style={{marginTop: 15}}>
+        <InactedTranscription onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+      </View>
+    )
   })
   
   const InactedTranscriptionList = () => (<>{inactedTranscriptionList}</>)
@@ -51,7 +70,7 @@ const Data = () => {
         break;
     }
     if (schema) {
-      const allItems = await fetchGraphQL(schema) 
+      const allItems = await fetchGraphQL(schema, {}, props.user.token) 
       const parsedItems = allItems.data[value].map(item => {
         const newItem = {
           ...item,
@@ -72,23 +91,49 @@ const Data = () => {
     }
   }
 
+  const LoginOrSelector = () => {
+    if (props.user.token) {
+      return (
+        <View style={styles.selectorWrapper}>
+          <RNPickerSelect
+            placeholder={{label: 'Select a table', value: 'Select a table'}}
+            style={{ inputAndroid: { color: 'white', padding: 20 } }}
+            onValueChange={onSelectChange}
+            items={[
+              {label: 'test', value: 'test'},
+              {label: 'running', value: 'running'},
+            ]}
+            value={selectorValue}
+          />
+        </View>
+      )
+    } else {
+      return (
+        <Login title="Login to show data" />
+      )
+    }
+  }
+
   return (
     <Layout>
+      <ScrollView>
         <View style={styles.container}>
           <InactedTranscriptionList/>
         </View>
-        <RNPickerSelect
-          style={{ inputAndroid: { color: 'white' } }}
-          onValueChange={onSelectChange}
-          items={[
-            {label: 'test', value: 'test'},
-            {label: 'running', value: 'running'},
-          ]}
-          value={selectorValue}
-        />
+        <View style={styles.selectorContainer}>
+          <Text style={styles.selectorLabel}>Table data: </Text>
+          <LoginOrSelector />
+        </View>
+
         <View style={styles.container}>
           <DataItems key={JSON.stringify(dataItems)}/>
         </View>
+        <View style={styles.navBar}>
+          <TouchableOpacity onPress={() => navigation.navigate('Record' as any)}>
+            <Text style={styles.navButton}>Record</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </Layout>
   )
 }
@@ -100,10 +145,47 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
-  selector: {
-    backgroundColor: 'white'
+  selectorContainer: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    alignContent: 'center',
+  },
+  selectorLabel: {
+    color: 'white',
+    fontSize: 20,
+    marginRight: 10,
+  },
+  selectorWrapper: {
+    width: '50%',
+    borderWidth: 1,
+    borderColor: '#555',
+    borderRadius: 5,
+    color: 'white',
+    paddingHorizontal: 10,
+  },
+  navBar: {
+    width: '100%',
+    flexDirection: 'row',
+    marginTop: 40,
+    justifyContent: 'flex-end',
+  },
+  navButton: {
+    fontSize: 16,
+    color: 'white',
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    backgroundColor: '#007aff',
+    alignSelf: 'flex-end',
+    borderRadius: 5,
+    margin: 5,
   }
 })
 
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+})
+const mapDispatchToProps = (dispatch: any) => ({
+  getUser: () => dispatch(getUser()),
+})
 
-export default Data
+export default connect(mapStateToProps, mapDispatchToProps)(Data)

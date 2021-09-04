@@ -1,47 +1,49 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import Recording from './screens/Record';
 import Data from './screens/Data';
+import { connect, Provider } from 'react-redux'
+import { store } from './redux/store'
+import Login from './components/Login'
+import { getUser } from './redux/actions/user';
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator()
 
-const App = () => {
+const App = (props) => {
   return (
-    <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: '#222'}}}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Record"
-          component={Recording}
-          options={({navigation}) => ({
-            title: "Record",
-            headerStyle: {backgroundColor: '#222'},
-            headerTitleStyle: {color: '#fff'},
-            headerRight: () => (
-              <TouchableOpacity onPress={() => navigation.navigate('Data')}>
-                <Text style={styles.pageNav}>Data</Text>
-              </TouchableOpacity>
-            )
-          })}
-        />
-        <Stack.Screen
-          name="Data"
-          component={Data}
-          options={({navigation}) => ({
-            title: "Data",
-            headerStyle: {backgroundColor: '#222'},
-            headerTitleStyle: {color: '#fff'},
-            headerRight: () => (
-              <TouchableOpacity onPress={() => navigation.navigate('Record')}>
-                <Text style={{...styles.pageNav, backgroundColor: '#fec107', color: '#222'}}>Record</Text>
-              </TouchableOpacity>
-            )
-          })}
-        />
+    <Provider store={store}>
+      <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: '#222'}}}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Record"
+            component={Recording}
+            options={({navigation}) => ({
+              title: "Record",
+              headerStyle: {backgroundColor: '#222'},
+              headerTitleStyle: {color: '#fff'},
+              headerRight: () => (
+                <Login />
+              )
+            })}
+          />
+          <Stack.Screen
+            name="Data"
+            component={Data}
+            options={({navigation}) => ({
+              title: "Data",
+              headerStyle: {backgroundColor: '#222'},
+              headerTitleStyle: {color: '#fff'},
+              headerRight: () => (
+                <Login />
+              )
+            })}
+          />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
@@ -57,21 +59,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default App;
-
-// send a request to https://speech.googleapis.com/v1/speech:recognize?key=YOUR_API_KEY
-// and get back a JSON response
-// {
-//   "results": [
-//     {
-//       "alternatives": [
-//         {
-//           "transcript": "hello"
-//         }
-//       ]
-//     }
-//   ]
-// }
-
-// web: 993323339867-h0olf9dihkjuiktadurnfvbgvum0q4s6.apps.googleusercontent.com
-// android: 
+export default App

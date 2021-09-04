@@ -2,12 +2,14 @@ import React, { useState, useRef } from 'react'
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Audio } from 'expo-av'
 import { FontAwesome } from '@expo/vector-icons';
+import { connect } from 'react-redux'
+import { setRecordingURI } from '../redux/actions/recordingURI'
 
-type RecordingProps = {
-  setURI: React.Dispatch<React.SetStateAction<string | undefined>>
-}
+// type RecordingProps = {
+//   setURI: React.Dispatch<React.SetStateAction<string | undefined>>
+// }
 
-const RecordButton = (props: RecordingProps) => {
+const RecordButton = (props) => {
   const [recording, setRecording] = useState<any>()
   const [isRecording, setIsRecording] = useState(false)
 
@@ -58,7 +60,7 @@ const RecordButton = (props: RecordingProps) => {
     console.log('loading sound');
     await playSound(uri)
 
-    props.setURI(uri)
+    props.setRecordingURI(uri)
 
     setRecording(undefined)
   }
@@ -99,5 +101,13 @@ const styles = StyleSheet.create({
   }
 })
 
+const mapStateToProps = (state: any) => ({
+  recordingURI: state.recordingURI.recordingURI
+})
 
-export default RecordButton
+const mapDispatchToProps = (dispatch: any) => ({
+  setRecordingURI: (uri: string) => dispatch(setRecordingURI(uri))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecordButton)

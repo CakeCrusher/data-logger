@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Image } from 'react-native'
+import { StyleSheet, View, Button, Text, TouchableOpacity } from 'react-native'
+import { useSelector, useDispatch, connect } from 'react-redux'
 import * as FileSystem from 'expo-file-system'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Login from '../components/Login'
 
 
 import Layout from '../components/Layout'
@@ -9,20 +10,35 @@ import RecordButton from '../components/RecordButton'
 import { Transcript } from '../types'
 import InactedTranscription from '../components/InactedTranscription'
 import { addTranscript, removeTranscript } from '../helperFunctions';
+import {BACKEND_URL} from 'react-native-dotenv'
+import { getUser } from '../redux/actions/user'
+import { useNavigation } from '@react-navigation/native'
 
-const Recording = () => {
+
+
+const Recording = (props: any) => {
   const [transcription, setTranscription] = useState<Transcript | undefined>()
-  const [uri, setURI] = useState<string | undefined>()
+
+  const counter = useSelector((state: any) => state.counter)
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
 
   useEffect(() => {
+    if (!props.user.userInfo.id && !props.user.userInfo.token) {
+      props.getUser()
+    }
+  }, [])
+  useEffect(() => {
     const postRecorded = async () => {
-      if (uri) {
-        const audioBase64 = await FileSystem.readAsStringAsync(uri, {encoding: FileSystem.EncodingType.Base64})
+      if (props.recordingURI) {
+        console.log('posting');
+        const audioBase64 = await FileSystem.readAsStringAsync(props.recordingURI, {encoding: FileSystem.EncodingType.Base64})
         const httpBody = {
           audioBase64
         }
-        const backendURL = 'https://3c3a-68-234-232-28.ngrok.io/transcribe'
-        const res = await fetch(backendURL, {
+        const transcribeUrl = 'https://7c4d-68-234-232-22.ngrok.io/transcribe'
+        
+        const res = await fetch(transcribeUrl, {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
@@ -30,24 +46,25 @@ const Recording = () => {
           body: JSON.stringify(httpBody)
         })
         const jsonRes: Transcript = await res.json()
-        console.log(jsonRes);
+        console.log('jsonRes: ', jsonRes);
         
-        if (jsonRes && jsonRes.table !== 'ERROR') {
-          console.log(jsonRes);
-          addTranscript(jsonRes)
+        if (jsonRes) {
+          if(jsonRes.table !== 'ERROR') {
+            addTranscript(jsonRes)
+          }
           setTranscription(jsonRes)
-        } else {
-          setTranscription(undefined)
         }
       }
     }
 
     postRecorded()
 
-  }, [uri])
+  }, [props.recordingURI])
 
   const onRemoveTranscript = async () => {
-    await removeTranscript(transcription)
+    if (transcription && transcription.table !== 'ERROR') {
+      await removeTranscript(transcription)
+    }
     setTranscription(undefined)
   }
 
@@ -55,8 +72,15 @@ const Recording = () => {
   return (
     <Layout>
         <View style={styles.container}>
-          <RecordButton setURI={setURI} />
-          <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+          <RecordButton />
+          <View style={{marginTop: 20}}>
+            <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+          </View>
+          <View style={styles.navBar}>
+            <TouchableOpacity onPress={() => navigation.navigate('Data' as any)}>
+              <Text style={styles.navButton}>Data</Text>
+            </TouchableOpacity>
+          </View>
         </View>
     </Layout>
   )
@@ -68,8 +92,31 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '100%',
+  },
+  navBar: {
+    width: '100%',
+    flexDirection: 'row',
+    marginTop: 40,
+    justifyContent: 'flex-end',
+  },
+  navButton: {
+    fontSize: 16,
+    color: 'white',
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    backgroundColor: '#007aff',
+    alignSelf: 'flex-end',
+    borderRadius: 5,
+    margin: 5,
   }
 })
 
+const mapStateToProps = (state: any) => ({
+  recordingURI: state.recordingURI.recordingURI,
+  user: state.user,
+})
+const mapDispatchToProps = (dispatch: any) => ({
+  getUser: () => dispatch(getUser()),
+})
 
-export default Recording
+export default connect(mapStateToProps, mapDispatchToProps)(Recording)
