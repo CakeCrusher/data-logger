@@ -7,20 +7,19 @@ import Login from '../components/Login'
 
 import Layout from '../components/Layout'
 import RecordButton from '../components/RecordButton'
-import { Transcript } from '../types'
+import { ClassifiedTranscription } from '../types'
 import InactedTranscription from '../components/InactedTranscription'
-import { addTranscript, removeTranscript } from '../helperFunctions';
+import { addTranscript, fetchGraphQL, removeTranscript } from '../helperFunctions';
 import {BACKEND_URL} from 'react-native-dotenv'
 import { getUser } from '../redux/actions/user'
 import { useNavigation } from '@react-navigation/native'
+import { CLASSIFY_TRANSCRIPTION, TRANSCRIPTION } from '../schemas'
 
 
 
 const Recording = (props: any) => {
-  const [transcription, setTranscription] = useState<Transcript | undefined>()
+  const [classifiedTranscription, setClassifiedTranscription] = useState<ClassifiedTranscription | undefined>()
 
-  const counter = useSelector((state: any) => state.counter)
-  const dispatch = useDispatch()
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -30,55 +29,49 @@ const Recording = (props: any) => {
   }, [])
   useEffect(() => {
     const postRecorded = async () => {
-      if (props.recordingURI) {
-        console.log('posting');
-        const audioBase64 = await FileSystem.readAsStringAsync(props.recordingURI, {encoding: FileSystem.EncodingType.Base64})
-        const httpBody = {
-          audioBase64
-        }
-        const transcribeUrl = 'http://6c38-68-234-232-22.ngrok.io/transcribe'
-        
-        const res = await fetch(transcribeUrl, {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify(httpBody)
-        })
-        const jsonRes: Transcript = await res.json()
-        console.log('jsonRes: ', jsonRes);
+      if (props.transcription.transcript) {
+        const classifyTranscriptRes = await fetchGraphQL(CLASSIFY_TRANSCRIPTION, {transcript: props.transcription.transcript}, props.user.token)
+        let classifyTranscript = classifyTranscriptRes.data.classifyTranscript
+        classifyTranscript = {...classifyTranscript, payload: JSON.parse(classifyTranscript.payload)}
+        console.log(classifyTranscript);
+        const jsonRes = classifyTranscript
         
         if (jsonRes) {
           if(jsonRes.table !== 'ERROR') {
             addTranscript(jsonRes)
           }
-          setTranscription(jsonRes)
+          setClassifiedTranscription(jsonRes)
         }
       }
     }
 
     postRecorded()
 
-  }, [props.recordingURI])
+  }, [props.transcription.transcript])
 
   const onRemoveTranscript = async () => {
-    if (transcription && transcription.table !== 'ERROR') {
-      await removeTranscript(transcription)
+    if (classifiedTranscription && classifiedTranscription.table !== 'ERROR') {
+      await removeTranscript(classifiedTranscription)
     }
-    setTranscription(undefined)
+    setClassifiedTranscription(undefined)
   }
 
 
   return (
     <Layout>
         <ScrollView style={styles.container}>
-          <RecordButton />
+          <View style={styles.buttonContainer}>
+            <RecordButton />
+          </View>
           <View style={{marginTop: 20}}>
-            <InactedTranscription key={JSON.stringify(transcription)} onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+            <InactedTranscription key={JSON.stringify(classifiedTranscription)} onRemoveTranscript={onRemoveTranscript} transcript={classifiedTranscription} disabledSubmit={false} />
           </View>
           <View style={styles.navBar}>
             <TouchableOpacity onPress={() => navigation.navigate('Data' as any)}>
               <Text style={styles.navButton}>Data</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateTable' as any)}>
+              <Text style={styles.navButton}>Create table</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -87,6 +80,9 @@ const Recording = (props: any) => {
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    height: 100,
+  },
   text: {
     color: 'white'
   },
@@ -112,8 +108,8 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = (state: any) => ({
-  recordingURI: state.recordingURI.recordingURI,
   user: state.user,
+  transcription: state.transcription
 })
 const mapDispatchToProps = (dispatch: any) => ({
   getUser: () => dispatch(getUser()),

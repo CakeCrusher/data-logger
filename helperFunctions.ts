@@ -10,8 +10,6 @@ export const fetchGraphQL = async (
     variables,
   });
   
-  console.log('token: ', token);
-  
   const requestOptions = {
     method: "POST",
     headers: {
@@ -37,7 +35,7 @@ export const jsonToUrlParams = (json: any) => {
 };
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Transcript } from './types';
+import { ClassifiedTranscription } from './types';
 
 export const clearTranscripts = async () => {
   await AsyncStorage.setItem("pendingTranscriptions", JSON.stringify([]));
@@ -46,7 +44,7 @@ export const clearTranscripts = async () => {
 
 export const addTranscript = async (transcript) => {
   const transcriptsStr = await AsyncStorage.getItem('pendingTranscriptions')
-  let transcripts: Transcript[] = []
+  let transcripts: ClassifiedTranscription[] = []
   if (transcriptsStr) {
     transcripts = JSON.parse(transcriptsStr)
   }
@@ -60,7 +58,7 @@ export const addTranscript = async (transcript) => {
 
 export const removeTranscript = async (transcript) => {
   const transcriptsStr = await AsyncStorage.getItem('pendingTranscriptions')
-  let transcripts: Transcript[] = []
+  let transcripts: ClassifiedTranscription[] = []
   if (transcriptsStr) {
     transcripts = JSON.parse(transcriptsStr)
   }
@@ -74,7 +72,7 @@ export const removeTranscript = async (transcript) => {
 
 export const getTranscripts = async () => {
   const transcriptsStr = await AsyncStorage.getItem('pendingTranscriptions')
-  let transcripts: Transcript[] = []
+  let transcripts: ClassifiedTranscription[] = []
   if (transcriptsStr) {
     transcripts = JSON.parse(transcriptsStr)
   }

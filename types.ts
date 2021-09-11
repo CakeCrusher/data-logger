@@ -1,4 +1,4 @@
-export type Transcript = {
+export type ClassifiedTranscription = {
   table: string;
   dateTime: string;
   payload: any;
@@ -18,4 +18,12 @@ export type UserInfo = {
 export type User = {
   userInfo: UserInfo,
   token: string | null,
+}
+export type TranscriptionState = {
+  transcript: string | null
+}
+
+export type Field = {
+  label: string,
+  type: 'number' | 'string'
 }

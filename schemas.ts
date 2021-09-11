@@ -61,3 +61,42 @@ query MyQuery {
   }
 }
 `
+
+export const MAKE_TABLE = `
+mutation MyMutation($fields: [Field]!, $name: String!) {
+  createTable(fields: $fields, name: $name) {
+    tableName
+  }
+}
+`
+// {
+//   "fields": [
+//     {
+//       "label": "isDog",
+//       "type": "boolean"
+//     },
+//     {
+//       "label": "responses",
+//       "type": "number"
+//     }
+//   ],
+//   "name": "dogrecognition"
+// }
+
+export const TRANSCRIPTION = `
+query MyQuery($audioBase64: String!) {
+  transcription(audioBase64: $audioBase64) {
+    transcript
+  }
+}
+`
+
+export const CLASSIFY_TRANSCRIPTION = `
+query MyQuery($transcript: String!) {
+  classifyTranscript(transcript: $transcript) {
+    dateTime
+    payload
+    table
+  }
+}
+`

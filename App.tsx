@@ -4,6 +4,7 @@ import {NavigationContainer, DefaultTheme} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import Recording from './screens/Record';
 import Data from './screens/Data';
+import CreateTable from './screens/CreateTable';
 import { connect, Provider } from 'react-redux'
 import { store } from './redux/store'
 import Login from './components/Login'
@@ -16,6 +17,18 @@ const App = (props) => {
     <Provider store={store}>
       <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: '#222'}}}>
         <Stack.Navigator>
+          <Stack.Screen
+            name="CreateTable"
+            component={CreateTable}
+            options={({navigation}) => ({
+              title: "CreateTable",
+              headerStyle: {backgroundColor: '#222'},
+              headerTitleStyle: {color: '#fff'},
+              headerRight: () => (
+                <Login />
+              )
+            })}
+          />
           <Stack.Screen
             name="Record"
             component={Recording}

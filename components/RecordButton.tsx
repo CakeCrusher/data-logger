@@ -4,6 +4,10 @@ import { Audio } from 'expo-av'
 import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 import { setRecordingURI } from '../redux/actions/recordingURI'
+import * as FileSystem from 'expo-file-system'
+import { fetchGraphQL } from '../helperFunctions';
+import { TRANSCRIPTION } from '../schemas';
+import {setTranscription} from '../redux/actions/transcription'
 
 // type RecordingProps = {
 //   setURI: React.Dispatch<React.SetStateAction<string | undefined>>
@@ -13,7 +17,7 @@ const RecordButton = (props) => {
   const [recording, setRecording] = useState<any>()
   const [isRecording, setIsRecording] = useState(false)
 
-  const Player = useRef(new Audio.Sound())
+  // const Player = useRef(new Audio.Sound())
 
   const playSound = async (uri) => {
     // const preExistingSound = await Player.current.getStatusAsync()
@@ -50,6 +54,16 @@ const RecordButton = (props) => {
     setIsRecording(true)
   }
   
+  const setTranscript = async (uri: string) => {
+    console.log('setting transcript');
+    const audioBase64 = await FileSystem.readAsStringAsync(uri, {encoding: FileSystem.EncodingType.Base64})
+    const transcriptionRes = await fetchGraphQL(TRANSCRIPTION, {audioBase64}, props.user.token)
+    console.log(transcriptionRes);
+    
+    const transcript = transcriptionRes.data.transcription.transcript
+    
+    props.setTranscription(transcript)
+  }
 
   const stoppedRecording = async () => {
     console.log('Stopping recording');
@@ -60,7 +74,7 @@ const RecordButton = (props) => {
     console.log('loading sound');
     await playSound(uri)
 
-    props.setRecordingURI(uri)
+    await setTranscript(uri)
 
     setRecording(undefined)
   }
@@ -92,21 +106,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    height: 400,
+    width: '100%',
+    height: '100%',
     borderRadius: 5,
     color: 'white'
   },
-  container: {
-    width: '100%',
-  }
 })
 
 const mapStateToProps = (state: any) => ({
-  recordingURI: state.recordingURI.recordingURI
+  transcription: state.transcription,
+  user: state.user
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setRecordingURI: (uri: string) => dispatch(setRecordingURI(uri))
+  setTranscription: (transcript: string) => dispatch(setTranscription(transcript))
 })
 
 

@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, TextInput } from 'react-native'
-import { TestPayload, Transcript, User } from '../types'
+import { TestPayload, ClassifiedTranscription, User } from '../types'
 
 import Layout from './Layout'
 import { AntDesign } from '@expo/vector-icons';
@@ -12,7 +12,8 @@ import Login from './Login';
 
 type InactedTranscriptionProps = {
   user: User,
-  transcript: Transcript | undefined
+  transcript: ClassifiedTranscription | undefined
+  disabledSubmit: boolean | undefined,
   onRemoveTranscript: () => void
 }
 
@@ -127,7 +128,7 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
     if (!props.user.token) {
       return (
         <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity onPress={deleteTranscription} style={{...styles.deleteButton, width: 40}}>
+          <TouchableOpacity disabled={props.disabledSubmit} onPress={deleteTranscription} style={{...styles.deleteButton, width: 40}}>
             <Entypo name="cross" size={24} color="white" />
           </TouchableOpacity>
           <Login title="Log in to save" />
@@ -136,10 +137,10 @@ const InactedTranscription = (props: InactedTranscriptionProps) => {
     } else {
       return (
         <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity onPress={deleteTranscription} style={styles.deleteButton}>
+          <TouchableOpacity disabled={props.disabledSubmit} onPress={deleteTranscription} style={styles.deleteButton}>
             <Entypo name="cross" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={saveTranscription} style={styles.saveButton}>
+          <TouchableOpacity disabled={props.disabledSubmit} onPress={saveTranscription} style={styles.saveButton}>
             <AntDesign name="check" size={24} color="white" />
           </TouchableOpacity>
         </View>

@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, TouchableOpacity, ScrollView } from 'react-nati
 
 import Layout from '../components/Layout'
 import InactedTranscription from '../components/InactedTranscription'
-import { Transcript } from '../types'
+import { ClassifiedTranscription } from '../types'
 import { clearTranscripts, fetchGraphQL, getTranscripts, removeTranscript } from '../helperFunctions'
 import RNPickerSelect from 'react-native-picker-select';
 import { GET_RUNNING, GET_TEST } from '../schemas'
@@ -17,7 +17,7 @@ import Chart from '../components/Chart'
 
 const Data = (props) => {
   const [dataItems, setDataItems] = useState<any[]>([])
-  const [trancripts, setTranscripts] = useState<Transcript[]>([])
+  const [trancripts, setTranscripts] = useState<ClassifiedTranscription[]>([])
   const [selectorValue, setSelectorValue] = useState<string>()
   const navigation = useNavigation()
 
@@ -53,7 +53,7 @@ const Data = (props) => {
 
     return (
       <View key={transcription.dateTime} style={{marginTop: 15}}>
-        <InactedTranscription onRemoveTranscript={onRemoveTranscript} transcript={transcription} />
+        <InactedTranscription onRemoveTranscript={onRemoveTranscript} transcript={transcription} disabledSubmit={false} />
       </View>
     )
   })
@@ -141,6 +141,9 @@ const Data = (props) => {
         <View style={styles.navBar}>
           <TouchableOpacity onPress={() => navigation.navigate('Record' as any)}>
             <Text style={styles.navButton}>Record</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('CreateTable' as any)}>
+            <Text style={styles.navButton}>Create table</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
