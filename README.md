@@ -6,7 +6,7 @@ Incorporate NLP (likely token classification) so that the system is able to reco
 ### Medium term (<6 months)
 Have the table creation be as simple as proving 1 example speech and the subsequent data to be plugged in should accept different ways of saying the speech and it should be logged accurately. Allow it to be used globally on the phone.
 ### Long term and end goal
-Effortless and hands free creation development of structured data paired with flexible API for customer use.
+Effortless and hands free development of structured data paired with flexible API for customer use.
 
 ## Potential uses
 - Engineer logging measurements with the data automatically being sent to whatever program they use with our API
